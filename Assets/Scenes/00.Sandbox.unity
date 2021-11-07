@@ -557,9 +557,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97a493591c86d1e4089e5f0f80011986, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gridWidth: 9
-  _gridLength: 9
-  _tile: {fileID: 5669738778861965113, guid: 4478997517883b647aeedb389d20c339, type: 3}
+  _gridWidth: 21
+  _gridLength: 21
+  _showGrid: 1
 --- !u!4 &494917016
 Transform:
   m_ObjectHideFlags: 0

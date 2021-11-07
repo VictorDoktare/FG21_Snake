@@ -4,8 +4,8 @@ using UnityEngine;
 public class GridManager : MonoBehaviour
 {
     [Range(1, 30)][SerializeField] private int _gridWidth, _gridLength;
-    [SerializeField] private GameObject _tile;
-    
+    [SerializeField] private bool _showGrid;
+
     private Vector3[,] _grid;
     private int xOffset, zOffset;
 
@@ -33,16 +33,19 @@ public class GridManager : MonoBehaviour
     //Visualize Grid For Easier Debugging.
     private void OnDrawGizmos()
     {
-        xOffset = _gridWidth / 2;
-        zOffset = _gridLength / 2;
-        
-        for (int x = 0; x < _gridWidth; x++)
+        if (_showGrid)
         {
-            for (int z = 0; z < _gridLength; z++)
+            xOffset = _gridWidth / 2;
+            zOffset = _gridLength / 2;
+        
+            for (int x = 0; x < _gridWidth; x++)
             {
-                Gizmos.color = Color.blue;
-                Gizmos.DrawCube(new Vector3(x - xOffset, 0 ,z - zOffset), new Vector3(0.2f, 0.2f, 0.2f));
-                Handles.Label(new Vector3(x - xOffset + 0.2f , 0 ,z - zOffset), $"{x},0,{z}");
+                for (int z = 0; z < _gridLength; z++)
+                {
+                    Gizmos.color = Color.blue;
+                    Gizmos.DrawCube(new Vector3(x - xOffset, -0.5f ,z - zOffset), new Vector3(0.25f, 0.1f, 0.25f));
+                    Handles.Label(new Vector3(x - xOffset + 0.25f , -0.5f ,z - zOffset - 0.25f), $"{x},{z}");
+                }
             }
         }
     }
