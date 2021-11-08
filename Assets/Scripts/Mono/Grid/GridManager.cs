@@ -1,14 +1,17 @@
 using UnityEditor;
 using UnityEngine;
 
-public class GridManager : MonoBehaviour
+public class GridManager : GenericSingleton<GridManager>
 {
     [Range(1, 30)][SerializeField] private int _gridWidth, _gridLength;
     [SerializeField] private bool _showGrid;
 
     private Vector3[,] _grid;
     private int xOffset, zOffset;
+    public Vector3[,] Grid => _grid;
 
+    #region Unity Event Functions
+    
     private void Start()
     {
         xOffset = _gridWidth / 2;
@@ -16,6 +19,8 @@ public class GridManager : MonoBehaviour
         
         CreateGrid(_gridWidth, _gridLength);
     }
+
+    #endregion
 
     private void CreateGrid(int width, int length)
     {
