@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-public class GridManager : GenericSingleton<GridManager>
+public class GridManager : Singleton<GridManager>
 {
     [Range(1, 30)][SerializeField] private int _gridWidth, _gridLength;
     [SerializeField] private bool _showGrid;
