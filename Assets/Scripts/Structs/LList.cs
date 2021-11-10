@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Mono.LinkedList
+namespace VD.Datastructures
 {
     public class LList <T>
     {
@@ -155,7 +155,7 @@ namespace Mono.LinkedList
             
             while (node != null)
             {
-                Debug.Log(node.Data);
+                Debug.Log(node.Value);
                 node = node.Next;
             }
         }
@@ -163,12 +163,12 @@ namespace Mono.LinkedList
         //Node
         public class Node
         {
-            public T Data { get; set; }
+            public T Value { get; set; }
             public Node Next { get; set; }
         
             public Node(T type)
             {
-                Data = type;
+                Value = type;
                 Next = null;
             }
         }

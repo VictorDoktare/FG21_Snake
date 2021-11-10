@@ -1,5 +1,6 @@
 using UnityEditor;
 using UnityEngine;
+using VD.Datastructures;
 
 public class GridManager : Singleton<GridManager>
 {
