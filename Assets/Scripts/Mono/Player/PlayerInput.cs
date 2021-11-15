@@ -7,6 +7,11 @@ public class PlayerInput : MonoBehaviour
 
     #region Unity Event Functions
 
+    private void Start()
+    {
+        _moveDirection = _moveDirection = new Vector3(0, 0, 1);
+    }
+
     private void Update()
     {
         InputDirection();
@@ -16,24 +21,24 @@ public class PlayerInput : MonoBehaviour
 
     private void InputDirection()
     {
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKeyDown(KeyCode.UpArrow) && _moveDirection != Vector3.back)
         {
-            _moveDirection = new Vector3(0, 0, 1);
+            _moveDirection = Vector3.forward;
         }
         
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+        if (Input.GetKeyDown(KeyCode.DownArrow) && _moveDirection != Vector3.forward)
         {
-            _moveDirection = new Vector3(0, 0, -1);
+            _moveDirection = Vector3.back;
         }
         
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        if (Input.GetKeyDown(KeyCode.LeftArrow) && _moveDirection != Vector3.right)
         {
-            _moveDirection = new Vector3(-1, 0, 0);
+            _moveDirection = Vector3.left;
         }
         
-        if (Input.GetKeyDown(KeyCode.RightArrow))
+        if (Input.GetKeyDown(KeyCode.RightArrow) && _moveDirection != Vector3.left)
         {
-            _moveDirection = new Vector3(1, 0, 0);
+            _moveDirection = Vector3.right;
         }
     }
 }

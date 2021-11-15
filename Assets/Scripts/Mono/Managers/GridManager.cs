@@ -19,6 +19,8 @@ public class GridManager : Singleton<GridManager>
         zOffset = _gridLength / 2;
         
         CreateGrid(_gridWidth, _gridLength);
+        
+        Debug.Log(_grid[0,0]);
     }
 
     #endregion
@@ -43,7 +45,7 @@ public class GridManager : Singleton<GridManager>
         {
             xOffset = _gridWidth / 2;
             zOffset = _gridLength / 2;
-        
+
             for (int x = 0; x < _gridWidth; x++)
             {
                 for (int z = 0; z < _gridLength; z++)
