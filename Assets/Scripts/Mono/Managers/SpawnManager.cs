@@ -5,7 +5,6 @@ using Random = UnityEngine.Random;
 public class SpawnManager : Singleton<SpawnManager>
 {
     [SerializeField] private GameObject _pickup;
-    [SerializeField] private Player _player;
 
     private int _xRand, _zRand;
     private Vector3 _randomPos;
@@ -13,6 +12,8 @@ public class SpawnManager : Singleton<SpawnManager>
     #region Unity Event Functions
     void Start()
     {
+        EventManager.Instance.onPickup += SpawnPickup;
+        
         SpawnPickup();
     }
     

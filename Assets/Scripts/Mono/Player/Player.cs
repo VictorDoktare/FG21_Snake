@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 using VD.Datastructures;
 
@@ -7,6 +8,8 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private GameObject _bodyPart;
     private LList<GameObject> _llPlayer;
+    private Vector3 _currentPos;
+    // private Vector3 _playerPos;
     
     //Dependencies
     private PlayerInput _playerInput;
@@ -20,10 +23,11 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-         _llPlayer = new LList<GameObject>();
-         
-         StartCoroutine(MovePlayer());
-         
+        EventManager.Instance.onPickup += AddBodyPart;
+        
+        _llPlayer = new LList<GameObject>();
+        _llPlayer.AddFirst(gameObject);
+        StartCoroutine(MovePlayer());
     }
 
     #endregion
@@ -32,47 +36,51 @@ public class Player : MonoBehaviour
     {
         while (true)
         {
-            Vector3 currentPos = default;
+            //Vector3 _currentPos = default;
     
             yield return new WaitForSeconds(0.25f);
-    
+
             if (_llPlayer.Count == 0)
             {
-                transform.position += _playerInput.MoveDirection;
+                // transform.position += _playerInput.MoveDirection;
             }
             else
             {
                 var nextNode = _llPlayer.Next;
                 
+                // transform.position += _playerInput.MoveDirection;
+
                 for (int i = 0; i < _llPlayer.Count; i++)
                 {
                     if (i == 0)
                     {
-                        var playerPos = transform.position;
+                        var headPos = _llPlayer.Head.Value.transform.position;
+  
+                        _currentPos = headPos;
+                        headPos += _playerInput.MoveDirection;
                         
-                        currentPos = playerPos;
-                        playerPos += _playerInput.MoveDirection;
-                        
-                        transform.position = playerPos;
+                        _llPlayer.Head.Value.transform.position = headPos;
                     }
                     else
                     {
                         CheckForSelfCollision(nextNode);
                         
-                        (currentPos, nextNode.Value.transform.position) = (nextNode.Value.transform.position, currentPos);
+                        (_currentPos, nextNode.Value.transform.position) = (nextNode.Value.transform.position, _currentPos);
                         nextNode = nextNode.Next;
                     }
                 }
     
             }
         }
+        // ReSharper disable once IteratorNeverReturns
     }
 
-    public void AddBodyPart()
+    private void AddBodyPart()
     {
-        Debug.Log("Pickedup");
-        _llPlayer.AddFirst(_bodyPart);
-        Debug.Log(_llPlayer.Count);
+        Debug.Log("PickedUp");
+        
+        var bodyPart = Instantiate(_bodyPart, _llPlayer.Tail.Value.transform.position, quaternion.identity);
+        _llPlayer.AddAfter(_llPlayer.Head, bodyPart);
     }
 
     private void CheckForSelfCollision(LList<GameObject>.Node nextNode)
