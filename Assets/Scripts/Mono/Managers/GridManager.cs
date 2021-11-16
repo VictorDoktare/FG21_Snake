@@ -12,15 +12,22 @@ public class GridManager : Singleton<GridManager>
     public Vector3[,] Grid => _grid;
 
     #region Unity Event Functions
-    
-    private void Start()
+
+    public override void Awake()
     {
+        base.Awake();
         xOffset = _gridWidth / 2;
         zOffset = _gridLength / 2;
         
         CreateGrid(_gridWidth, _gridLength);
-        
-        Debug.Log(_grid[0,0]);
+    }
+
+    private void Start()
+    {
+        // xOffset = _gridWidth / 2;
+        // zOffset = _gridLength / 2;
+        //
+        // CreateGrid(_gridWidth, _gridLength);
     }
 
     #endregion

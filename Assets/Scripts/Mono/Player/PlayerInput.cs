@@ -21,22 +21,22 @@ public class PlayerInput : MonoBehaviour
 
     private void InputDirection()
     {
+        //North & South
         if (Input.GetKeyDown(KeyCode.UpArrow) && _moveDirection != Vector3.back)
         {
             _moveDirection = Vector3.forward;
         }
-        
-        if (Input.GetKeyDown(KeyCode.DownArrow) && _moveDirection != Vector3.forward)
+        else if (Input.GetKeyDown(KeyCode.DownArrow) && _moveDirection != Vector3.forward)
         {
             _moveDirection = Vector3.back;
         }
         
+        //East & West
         if (Input.GetKeyDown(KeyCode.LeftArrow) && _moveDirection != Vector3.right)
         {
             _moveDirection = Vector3.left;
         }
-        
-        if (Input.GetKeyDown(KeyCode.RightArrow) && _moveDirection != Vector3.left)
+        else if (Input.GetKeyDown(KeyCode.RightArrow) && _moveDirection != Vector3.left)
         {
             _moveDirection = Vector3.right;
         }

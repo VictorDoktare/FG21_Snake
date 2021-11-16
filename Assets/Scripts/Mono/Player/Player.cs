@@ -5,15 +5,11 @@ using VD.Datastructures;
 [RequireComponent(typeof(PlayerInput))]
 public class Player : MonoBehaviour
 {
-    [SerializeField] private GameObject[] _playerBody;
-    
+    [SerializeField] private GameObject _bodyPart;
     private LList<GameObject> _llPlayer;
-    private LList<GameObject>.Node _playerNode;
     
     //Dependencies
     private PlayerInput _playerInput;
-
-    public LList<GameObject>.Node PlayerNode => _playerNode;
 
     #region Unity Event Functions
 
@@ -24,16 +20,10 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        _llPlayer = new LList<GameObject>();
-        _llPlayer.AddFirst(gameObject);
-
-        for (int i = 0; i < _playerBody.Length; i++)
-        {
-            _llPlayer.AddLast(_playerBody[i]);
-        }
-        
-        StartCoroutine(MovePlayer());
-        
+         _llPlayer = new LList<GameObject>();
+         
+         StartCoroutine(MovePlayer());
+         
     }
 
     #endregion
@@ -43,51 +33,55 @@ public class Player : MonoBehaviour
         while (true)
         {
             Vector3 currentPos = default;
-            _playerNode = _llPlayer.Next;
-            
-            yield return new WaitForSeconds(0.5f);
-
-            if (_llPlayer.Head.Next == null)
+    
+            yield return new WaitForSeconds(0.25f);
+    
+            if (_llPlayer.Count == 0)
             {
-                _llPlayer.Head.Value.transform.position += _playerInput.MoveDirection;
+                transform.position += _playerInput.MoveDirection;
             }
             else
             {
+                var nextNode = _llPlayer.Next;
+                
                 for (int i = 0; i < _llPlayer.Count; i++)
                 {
                     if (i == 0)
                     {
-                        var headPos = _llPlayer.Head.Value.transform.position;
+                        var playerPos = transform.position;
                         
-                        currentPos = headPos;
-                        headPos += _playerInput.MoveDirection;
+                        currentPos = playerPos;
+                        playerPos += _playerInput.MoveDirection;
                         
-                        _llPlayer.Head.Value.transform.position = headPos;
+                        transform.position = playerPos;
                     }
-                    else if (_playerNode != null)
+                    else
                     {
-                        CheckForSelfCollision(_playerNode);
+                        CheckForSelfCollision(nextNode);
                         
-                        (currentPos, _playerNode.Value.transform.position) = (_playerNode.Value.transform.position, currentPos);
-                        _playerNode = _playerNode.Next;
+                        (currentPos, nextNode.Value.transform.position) = (nextNode.Value.transform.position, currentPos);
+                        nextNode = nextNode.Next;
                     }
                 }
-
+    
             }
         }
     }
 
-    private void AddBodyPart()
+    public void AddBodyPart()
     {
-        //todo add body part when pickup
+        Debug.Log("Pickedup");
+        _llPlayer.AddFirst(_bodyPart);
+        Debug.Log(_llPlayer.Count);
     }
 
-    private void CheckForSelfCollision(LList<GameObject>.Node body)
+    private void CheckForSelfCollision(LList<GameObject>.Node nextNode)
     {
-        var head = _llPlayer.Head;
+        var playerPos = transform.position;
 
-        if (head.Value.transform.position == body.Value.transform.position)
+        if (playerPos == nextNode.Value.transform.position)
         {
+            StopAllCoroutines();
             Debug.Log("Dead");
         }
     }
