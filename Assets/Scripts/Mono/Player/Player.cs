@@ -32,8 +32,17 @@ public class Player : MonoBehaviour
     private void Start()
     {
         //Events to listen for
-        EventManager.Instance.onPickup += AddBodyPart;
-        EventManager.Instance.onStartGame += StartMoving;
+        EventManager.Instance.ONPickup += AddBodyPart;
+        EventManager.Instance.ONStartGame += StartMoving;
+    }
+    
+    private void OnDestroy()
+    {
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.ONPickup -= AddBodyPart;
+            EventManager.Instance.ONStartGame -= StartMoving;
+        }
     }
 
     #endregion
@@ -139,11 +148,5 @@ public class Player : MonoBehaviour
     {
         StopAllCoroutines();
         EventManager.Instance.EndGame();
-    }
-
-    private void OnDestroy()
-    {
-        EventManager.Instance.onPickup -= AddBodyPart;
-        EventManager.Instance.onStartGame -= StartMoving;
     }
 }

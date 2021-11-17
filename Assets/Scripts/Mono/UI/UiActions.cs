@@ -1,4 +1,3 @@
-using System;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -10,12 +9,15 @@ public class UiActions : MonoBehaviour
     #region Unity Event Functions
     private void OnEnable()
     {
-        EventManager.Instance.onEndGame += ShowGameOverUi;
+        EventManager.Instance.ONEndGame += ShowGameOverUi;
     }
     
     private void OnDestroy()
     {
-        EventManager.Instance.onEndGame -= ShowGameOverUi;
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.ONEndGame -= ShowGameOverUi;
+        }
     }
 
     #endregion
@@ -28,7 +30,7 @@ public class UiActions : MonoBehaviour
     public void EndGame()
     {
         EditorApplication.isPlaying = false;
-        //Application.Quit();
+        Application.Quit();
     }
 
     private void ShowGameOverUi()

@@ -13,8 +13,8 @@ public class SpawnManager : MonoBehaviour
     void Start()
     {
         //Events to listen for
-        EventManager.Instance.onPickup += SpawnPickup;
-        EventManager.Instance.onStartGame += SpawnPickup;
+        EventManager.Instance.ONPickup += SpawnPickup;
+        EventManager.Instance.ONStartGame += SpawnPickup;
     }
     
     #endregion
@@ -72,7 +72,10 @@ public class SpawnManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        EventManager.Instance.onPickup -= SpawnPickup;
-        EventManager.Instance.onStartGame -= SpawnPickup;
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.ONPickup -= SpawnPickup;
+            EventManager.Instance.ONStartGame -= SpawnPickup;
+        }
     }
 }

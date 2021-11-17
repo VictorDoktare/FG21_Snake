@@ -14,7 +14,7 @@ public class HighScore : MonoBehaviour
         _highScoreText = GetComponent<TextMeshProUGUI>();
         _highScoreText.text = $"{_highScore}";
         
-        EventManager.Instance.onEndGame += SaveHighscore;
+        EventManager.Instance.ONEndGame += SaveHighscore;
     }
 
     private void SaveHighscore()
@@ -28,6 +28,9 @@ public class HighScore : MonoBehaviour
 
     private void OnDestroy()
     {
-        EventManager.Instance.onEndGame -= SaveHighscore;
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.ONEndGame -= SaveHighscore;
+        }
     }
 }

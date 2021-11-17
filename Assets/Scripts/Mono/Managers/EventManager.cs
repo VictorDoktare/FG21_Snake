@@ -3,21 +3,21 @@ using VD.Datastructures;
 
 public class EventManager : Singleton<EventManager>
 {
-    public event Action onPickup;
+    public event Action ONPickup;
     public void PickUp()
     {
-        onPickup?.Invoke();
+        ONPickup?.Invoke();
     }
     
-    public Action onStartGame;
+    public Action ONStartGame;
     public void StartGame()
     {
-        onStartGame?.Invoke();
+        ONStartGame?.Invoke();
     }
 
-    public Action onEndGame;
+    public Action ONEndGame;
     public void EndGame()
     {
-        onEndGame?.Invoke();
+        ONEndGame?.Invoke();
     }
 }
