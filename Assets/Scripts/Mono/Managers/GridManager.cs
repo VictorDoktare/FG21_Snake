@@ -21,15 +21,6 @@ public class GridManager : Singleton<GridManager>
         
         CreateGrid(_gridWidth, _gridLength);
     }
-
-    private void Start()
-    {
-        // xOffset = _gridWidth / 2;
-        // zOffset = _gridLength / 2;
-        //
-        // CreateGrid(_gridWidth, _gridLength);
-    }
-
     #endregion
 
     private void CreateGrid(int width, int length)
