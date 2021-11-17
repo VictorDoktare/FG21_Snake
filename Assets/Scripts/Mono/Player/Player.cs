@@ -12,24 +12,26 @@ public class Player : MonoBehaviour
     private Vector3 _currentPos;
     private Vector3 _headPos;
     private GameObject _bodyObj;
-    private bool _isMoving = false;
 
     //Dependencies
     private PlayerInput _playerInput;
+
+    public LList<GameObject> LlPlayer => _llPlayer;
 
     #region Unity Event Functions
 
     private void Awake()
     {
         _playerInput = GetComponent<PlayerInput>();
+        
+        //Need to be set in awake to avoid null when SpawnManager access it
+        _llPlayer = new LList<GameObject>();
+        _llPlayer.AddFirst(gameObject);
     }
 
     private void Start()
     {
         EventManager.Instance.onPickup += AddBodyPart;
-        
-        _llPlayer = new LList<GameObject>();
-        _llPlayer.AddFirst(gameObject);
         StartCoroutine(MovePlayer());
     }
 
@@ -40,7 +42,7 @@ public class Player : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(1f);
-            
+
             var nextNode = _llPlayer.Next;
             _headPos = _llPlayer.Head.Value.transform.position;
 
@@ -48,21 +50,20 @@ public class Player : MonoBehaviour
             _headPos += _playerInput.MoveDirection;
 
             _llPlayer.Head.Value.transform.position = _headPos;
+            
+            CheckBoundaryCollision();
 
             if (_bodyObj != null)
             {
                 //No body movement during pickup, only collision check
                 if (_currentPos == _bodyObj.transform.position)
                 {
-                    if (nextNode != null)
+                    for (int i = 0; i < _llPlayer.Count - 1; i++)
                     {
-                        for (int i = 0; i < _llPlayer.Count - 1; i++)
+                        if (nextNode != null)
                         {
-                            if (nextNode != null)
-                            {
-                                CheckForSelfCollision(nextNode);
-                                nextNode = nextNode.Next;
-                            }
+                            CheckSelfCollision(nextNode);
+                            nextNode = nextNode.Next;
                         }
                     }
                 }
@@ -73,7 +74,7 @@ public class Player : MonoBehaviour
                     {
                         if (nextNode != null)
                         {
-                            CheckForSelfCollision(nextNode);
+                            CheckSelfCollision(nextNode);
 
                             (_currentPos, nextNode.Value.transform.position) = (nextNode.Value.transform.position, _currentPos);
                             nextNode = nextNode.Next;
@@ -97,13 +98,32 @@ public class Player : MonoBehaviour
         _bodyObj.name = $"BodyPart({_llPlayer.Count})";
     }
 
-    private void CheckForSelfCollision(LList<GameObject>.Node nextNode)
+    
+    private void CheckSelfCollision(LList<GameObject>.Node nextNode)
     {
         var playerPos = transform.position;
 
         if (playerPos == nextNode.Value.transform.position)
         {
-            StopAllCoroutines();
+            GameOver();
         }
+    }
+    
+    private void CheckBoundaryCollision()
+    {
+        //Could do it modular and based on grid but saving some time and hard set it just for this assignment
+        if (transform.position.x == 11 ||
+            transform.position.x == -11 ||
+            transform.position.z == -11 ||
+            transform.position.z == -11)
+        {
+            GameOver();
+        }
+    }
+
+    private void GameOver()
+    {
+        Debug.Log("GameOver");
+        StopAllCoroutines();
     }
 }
