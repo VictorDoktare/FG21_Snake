@@ -6,11 +6,12 @@ using VD.Datastructures;
 [RequireComponent(typeof(PlayerInput))]
 public class Player : MonoBehaviour
 {
-    [SerializeField] private GameObject _bodyPart;
+    [SerializeField] private GameObject bodyPart;
     private LList<GameObject> _llPlayer;
     private Vector3 _currentPos;
-    // private Vector3 _playerPos;
-    
+    private Vector3 _oldPos;
+    private GameObject bodyObj;
+
     //Dependencies
     private PlayerInput _playerInput;
 
@@ -36,40 +37,30 @@ public class Player : MonoBehaviour
     {
         while (true)
         {
-            //Vector3 _currentPos = default;
-    
-            yield return new WaitForSeconds(0.25f);
+            yield return new WaitForSeconds(0.5f);
 
-            if (_llPlayer.Count == 0)
-            {
-                // transform.position += _playerInput.MoveDirection;
-            }
-            else
-            {
-                var nextNode = _llPlayer.Next;
-                
-                // transform.position += _playerInput.MoveDirection;
+            _oldPos = _llPlayer.Head.Value.transform.position;
+            
+            var nextNode = _llPlayer.Next;
 
-                for (int i = 0; i < _llPlayer.Count; i++)
+            for (int i = 0; i < _llPlayer.Count; i++)
+            {
+                if (i == 0)
                 {
-                    if (i == 0)
-                    {
-                        var headPos = _llPlayer.Head.Value.transform.position;
-  
-                        _currentPos = headPos;
-                        headPos += _playerInput.MoveDirection;
-                        
-                        _llPlayer.Head.Value.transform.position = headPos;
-                    }
-                    else
-                    {
-                        CheckForSelfCollision(nextNode);
-                        
-                        (_currentPos, nextNode.Value.transform.position) = (nextNode.Value.transform.position, _currentPos);
-                        nextNode = nextNode.Next;
-                    }
+                    var headPos = _llPlayer.Head.Value.transform.position;
+
+                    _currentPos = headPos;
+                    headPos += _playerInput.MoveDirection;
+
+                    _llPlayer.Head.Value.transform.position = headPos;
                 }
-    
+                else if (_llPlayer.Next != null)
+                {
+                    CheckForSelfCollision(nextNode);
+
+                    (_currentPos, nextNode.Value.transform.position) = (nextNode.Value.transform.position, _currentPos);
+                    nextNode = nextNode.Next;
+                }
             }
         }
         // ReSharper disable once IteratorNeverReturns
@@ -77,10 +68,14 @@ public class Player : MonoBehaviour
 
     private void AddBodyPart()
     {
-        Debug.Log("PickedUp");
+        var parent = GameObject.Find("====== CLONES ======");
+
+        bodyObj = Instantiate(bodyPart, _oldPos, quaternion.identity);
+        _llPlayer.AddAfter(_llPlayer.Head, bodyObj);
         
-        var bodyPart = Instantiate(_bodyPart, _llPlayer.Tail.Value.transform.position, quaternion.identity);
-        _llPlayer.AddAfter(_llPlayer.Head, bodyPart);
+        //Organizing the objects in scene to track them easier
+        bodyObj.transform.parent = parent.transform;
+        bodyObj.name = $"BodyPart({_llPlayer.Count})";
     }
 
     private void CheckForSelfCollision(LList<GameObject>.Node nextNode)
