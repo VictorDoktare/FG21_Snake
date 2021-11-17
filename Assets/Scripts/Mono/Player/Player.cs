@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Unity.Mathematics;
 using UnityEngine;
@@ -7,13 +8,12 @@ using VD.Datastructures;
 public class Player : MonoBehaviour
 {
     [SerializeField] private GameObject bodyPart;
-    
+
     private LList<GameObject> _llPlayer;
     private Vector3 _currentPos;
     private Vector3 _headPos;
     private GameObject _bodyObj;
-
-    //Dependencies
+    
     private PlayerInput _playerInput;
 
     public LList<GameObject> LlPlayer => _llPlayer;
@@ -31,17 +31,22 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+        //Events to listen for
         EventManager.Instance.onPickup += AddBodyPart;
-        StartCoroutine(MovePlayer());
+        EventManager.Instance.onStartGame += StartMoving;
     }
 
     #endregion
 
+    private void StartMoving()
+    {
+        StartCoroutine(MovePlayer());
+    }
     IEnumerator MovePlayer()
     {
         while (true)
         {
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.25f);
 
             var nextNode = _llPlayer.Next;
             _headPos = _llPlayer.Head.Value.transform.position;
@@ -49,39 +54,46 @@ public class Player : MonoBehaviour
             _currentPos = _headPos;
             _headPos += _playerInput.MoveDirection;
 
-            _llPlayer.Head.Value.transform.position = _headPos;
-            
-            CheckBoundaryCollision();
-
-            if (_bodyObj != null)
+            //Checking boundary collision before moving player because i dont want to move the object outside the ground
+            if (CheckBoundaryCollision(_headPos))
             {
-                //No body movement during pickup, only collision check
-                if (_currentPos == _bodyObj.transform.position)
+                GameOver();
+            }
+            else
+            {
+                _llPlayer.Head.Value.transform.position = _headPos;
+
+                if (_bodyObj != null)
                 {
-                    for (int i = 0; i < _llPlayer.Count - 1; i++)
+                    //No body movement during pickup, only collision check
+                    if (_currentPos == _bodyObj.transform.position)
                     {
-                        if (nextNode != null)
+                        for (int i = 0; i < _llPlayer.Count - 1; i++)
                         {
-                            CheckSelfCollision(nextNode);
-                            nextNode = nextNode.Next;
+                            if (nextNode != null)
+                            {
+                                CheckSelfCollision(nextNode);
+                                nextNode = nextNode.Next;
+                            }
                         }
                     }
-                }
-                //Body movement
-                else
-                {
-                    for (int i = 0; i < _llPlayer.Count - 1; i++)
+                    //Body movement
+                    else
                     {
-                        if (nextNode != null)
+                        for (int i = 0; i < _llPlayer.Count - 1; i++)
                         {
-                            CheckSelfCollision(nextNode);
+                            if (nextNode != null)
+                            {
+                                CheckSelfCollision(nextNode);
 
-                            (_currentPos, nextNode.Value.transform.position) = (nextNode.Value.transform.position, _currentPos);
-                            nextNode = nextNode.Next;
+                                (_currentPos, nextNode.Value.transform.position) = (nextNode.Value.transform.position, _currentPos);
+                                nextNode = nextNode.Next;
+                            }
                         }
                     }
                 }
             }
+            
         }
         // ReSharper disable once IteratorNeverReturns
     }
@@ -109,21 +121,29 @@ public class Player : MonoBehaviour
         }
     }
     
-    private void CheckBoundaryCollision()
+    private bool CheckBoundaryCollision(Vector3 playerPos)
     {
         //Could do it modular and based on grid but saving some time and hard set it just for this assignment
-        if (transform.position.x == 11 ||
-            transform.position.x == -11 ||
-            transform.position.z == -11 ||
-            transform.position.z == -11)
+        if (playerPos.x == 11 ||
+            playerPos.x == -11 ||
+            playerPos.z == 11 ||
+            playerPos.z == -11)
         {
-            GameOver();
+            return true;
         }
+
+        return false;
     }
 
     private void GameOver()
     {
-        Debug.Log("GameOver");
         StopAllCoroutines();
+        EventManager.Instance.EndGame();
+    }
+
+    private void OnDestroy()
+    {
+        EventManager.Instance.onPickup -= AddBodyPart;
+        EventManager.Instance.onStartGame -= StartMoving;
     }
 }

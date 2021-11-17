@@ -43,5 +43,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c18c5b89fc079042bcd444cb2cdab9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _pickup: {fileID: 787646365535961809, guid: bb64d763042233645af3152d0d62c668, type: 3}
-  _player: {fileID: 5121237129286557917, guid: 375101e51a8b5e74fa6edb1f419b1a8a, type: 3}
+  _pickUp: {fileID: 787646365535961809, guid: bb64d763042233645af3152d0d62c668, type: 3}
+  _pplayer: {fileID: 5121237129286557915, guid: 375101e51a8b5e74fa6edb1f419b1a8a, type: 3}

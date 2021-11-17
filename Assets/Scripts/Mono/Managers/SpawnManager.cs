@@ -1,21 +1,20 @@
 using Unity.Mathematics;
 using UnityEngine;
-using VD.Datastructures;
 using Random = UnityEngine.Random;
 
-public class SpawnManager : Singleton<SpawnManager>
+public class SpawnManager : MonoBehaviour
 {
     [SerializeField] private GameObject _pickUp;
     [SerializeField] private Player _player;
-    
+
     private Vector3 _randomPos;
     
     #region Unity Event Functions
     void Start()
     {
+        //Events to listen for
         EventManager.Instance.onPickup += SpawnPickup;
-        
-        SpawnPickup();
+        EventManager.Instance.onStartGame += SpawnPickup;
     }
     
     #endregion
@@ -69,5 +68,11 @@ public class SpawnManager : Singleton<SpawnManager>
         var zRand = Random.Range(0, GridManager.Instance.Grid.GetLength(1));
 
         return GridManager.Instance.Grid[xRand, zRand];
+    }
+
+    private void OnDestroy()
+    {
+        EventManager.Instance.onPickup -= SpawnPickup;
+        EventManager.Instance.onStartGame -= SpawnPickup;
     }
 }
